@@ -1,20 +1,22 @@
 ---
 id: hooks-state
-title: Using the State Hook
+title: 使用 State Hook
 permalink: docs/hooks-state.html
 next: hooks-effect.html
 prev: hooks-overview.html
 ---
 
-*Hooks* are a new addition in React 16.8. They let you use state and other React features without writing a class.
+*Hooks* 是 React 16.8 新加入的概念。 它可以让你在不需要 class 的情况下使用 state 和其他 React 特性。
 
 The [previous page](/docs/hooks-intro.html) introduced Hooks with this example:
+[上一页](/docs/hooks-intro.html) 中我们用这个例子介绍了 Hooks：
 
 ```js{4-5}
 import React, { useState } from 'react';
 
 function Example() {
   // Declare a new state variable, which we'll call "count"
+  // 定义一个新的 state 变量，我们叫它 "count"
   const [count, setCount] = useState(0);
 
   return (
@@ -28,11 +30,11 @@ function Example() {
 }
 ```
 
-We'll start learning about Hooks by comparing this code to an equivalent class example.
+现在我们开始学习 Hooks ，让我们先来对比一下这段代码和一段与它等价，但使用 class 实现的范例。
 
-## Equivalent Class Example {#equivalent-class-example}
+## 等价的 Class 范例 {#equivalent-class-example}
 
-If you used classes in React before, this code should look familiar:
+如果你在 React 用过 class ，这段代码看起来应该很熟悉：
 
 ```js
 class Example extends React.Component {
@@ -57,8 +59,13 @@ class Example extends React.Component {
 ```
 
 The state starts as `{ count: 0 }`, and we increment `state.count` when the user clicks a button by calling `this.setState()`. We'll use snippets from this class throughout the page.
+state 从 `{ count: 0 }` 开始，当用户每次点击按钮时，我们就调用 `this.setState()` 增加 `state.count` 。后文里我们将会多次使用这里的代码片段。
 
 >Note
+>
+>You might be wondering why we're using a counter here instead of a more realistic example. This is to help us focus on the API while we're still making our first steps with Hooks.
+
+>注意
 >
 >You might be wondering why we're using a counter here instead of a more realistic example. This is to help us focus on the API while we're still making our first steps with Hooks.
 
