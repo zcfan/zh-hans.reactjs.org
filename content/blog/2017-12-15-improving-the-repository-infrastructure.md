@@ -1,20 +1,20 @@
 ---
-title: "Behind the Scenes: Improving the Repository Infrastructure"
+title: "幕后：完善仓库基础设施"
 author: [gaearon, bvaughn]
 ---
 
-As we worked on [React 16](/blog/2017/09/26/react-v16.0.html), we revamped the folder structure and much of the build tooling in the React repository. Among other things, we introduced projects such as [Rollup](https://rollupjs.org/), [Prettier](https://prettier.io/), and [Google Closure Compiler](https://developers.google.com/closure/compiler/) into our workflow. People often ask us questions about how we use those tools. In this post, we would like to share some of the changes that we've made to our build and test infrastructure in 2017, and what motivated them.
+在我们着手开发 [React 16](/blog/2017/09/26/react-v16.0.html) 的时候，我们翻新了 React 仓库的文件目录结构和许多构建工具链。除此之外，我们还向我们的工作流中引入了 [Rollup](https://rollupjs.org/) ，[Prettier](https://prettier.io/) 以及 [Google Closure Compiler](https://developers.google.com/closure/compiler/) 这些项目。人们经常会问我们一些关于如何使用这些工具的问题。在这篇文章中，我们想要分享一些 2017 中我们对构建和测试基础设施的改变，以及是什么让促使我们做出这些变化。
 
-While these changes helped us make React better, they don't affect most React users directly. However, we hope that blogging about them might help other library authors solve similar problems. Our contributors might also find these notes helpful!
+尽管这些改变帮助我们让 React 变得更好，它们却不会直接影响大多数 React 用户。但是我们希望为它们写这篇博客能帮助其他的类库开发者解决相似的问题，我们的贡献者们可能也会从中收益。
 
-## Formatting Code with Prettier {#formatting-code-with-prettier}
+## 使用 Prettier 格式化代码 {#formatting-code-with-prettier}
 
-React was one of the first large repositories to [fully embrace](https://github.com/facebook/react/pull/9101) opinionated automatic code formatting with [Prettier](https://prettier.io/). Our current Prettier setup consists of:
+React [完全拥抱](https://github.com/facebook/react/pull/9101) [Prettier](https://prettier.io/) ，使用它进行强制的代码自动格式化。是所有这么做的仓库里最大的之一。我们当前的 Prettier 配置包含了：
 
-* A local [`yarn prettier`](https://github.com/facebook/react/blob/cc52e06b490e0dc2482b345aa5d0d65fae931095/package.json#L115) script that [uses the Prettier Node API](https://github.com/facebook/react/blob/cc52e06b490e0dc2482b345aa5d0d65fae931095/scripts/prettier/index.js#L71-L77) to format files in place. We typically run it before committing changes. It is fast because it only checks the [files changed since diverging from remote master](https://github.com/facebook/react/blob/cc52e06b490e0dc2482b345aa5d0d65fae931095/scripts/shared/listChangedFiles.js#L29-L33).
-* A script that [runs Prettier](https://github.com/facebook/react/blob/cc52e06b490e0dc2482b345aa5d0d65fae931095/scripts/prettier/index.js#L79-L90) as part of our [continuous integration checks](https://github.com/facebook/react/blob/d906de7f602df810c38aa622c83023228b047db6/scripts/circleci/test_entry_point.sh#L10). It won't attempt to overwrite the files, but instead will fail the build if any file differs from the Prettier output for that file. This ensures that we can't merge a pull request unless it has been fully formatted.
+* 一个本地的 [`yarn prettier`](https://github.com/facebook/react/blob/cc52e06b490e0dc2482b345aa5d0d65fae931095/package.json#L115) 脚本，使用了 [Prettier Node API](https://github.com/facebook/react/blob/cc52e06b490e0dc2482b345aa5d0d65fae931095/scripts/prettier/index.js#L71-L77) 以原地格式化文件。我们通常在提交变更前执行它。它速度很快因为它只会检查那些[与远端 master 分支有差异的文件](https://github.com/facebook/react/blob/cc52e06b490e0dc2482b345aa5d0d65fae931095/scripts/shared/listChangedFiles.js#L29-L33)。
+* 一个将 [Prittier](https://github.com/facebook/react/blob/cc52e06b490e0dc2482b345aa5d0d65fae931095/scripts/prettier/index.js#L79-L90) 作为我们的[持续继承检查](https://github.com/facebook/react/blob/d906de7f602df810c38aa622c83023228b047db6/scripts/circleci/test_entry_point.sh#L10) 一部分的脚本。它不会尝试覆盖这些文件，而是在发现任何原内容与 Prettier 输出不同的文件时，让构建过程失败。这样就保证了除非 pull request 彻底格式化完成，否则我们不会合并它。
 
-Some team members have also set up the [editor integrations](https://prettier.io/docs/en/editors.html). Our experience with Prettier has been fantastic, and we recommend it to any team that writes JavaScript.
+一些组员还做了[编辑器集成配置](https://prettier.io/docs/en/editors.html)。我们对 Prettier 的使用体验非常的好，也推荐任何编写 JavaScript 的团队使用它。
 
 ## Restructuring the Monorepo {#restructuring-the-monorepo}
 
